@@ -36,8 +36,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           ? resp.message.join(', ')
           : (resp.message as string) || exception.message;
         code =
-          (resp.error as string)?.toUpperCase().replace(/\s+/g, '_') ||
-          'HTTP_ERROR';
+          typeof resp.error === 'string'
+            ? resp.error.toUpperCase().replace(/\s+/g, '_')
+            : 'HTTP_ERROR';
       } else {
         message = exception.message;
       }
@@ -71,6 +72,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       [HttpStatus.CONFLICT]: 'CONFLICT',
       [HttpStatus.TOO_MANY_REQUESTS]: 'TOO_MANY_REQUESTS',
       [HttpStatus.UNPROCESSABLE_ENTITY]: 'UNPROCESSABLE_ENTITY',
+      [HttpStatus.SERVICE_UNAVAILABLE]: 'SERVICE_UNAVAILABLE',
     };
     return codeMap[status] || fallback;
   }
