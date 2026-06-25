@@ -1,0 +1,86 @@
+import { plainToInstance } from 'class-transformer';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+  validateSync,
+} from 'class-validator';
+
+enum Environment {
+  Development = 'development',
+  Production = 'production',
+  Staging = 'staging',
+  Test = 'test',
+}
+
+class EnvironmentVariables {
+  @IsOptional()
+  @IsNumber()
+  PORT?: number;
+
+  @IsEnum(Environment)
+  NODE_ENV: Environment;
+
+  @IsString()
+  MONGODB_URI: string;
+
+  @IsString()
+  JWT_ACCESS_SECRET: string;
+
+  @IsString()
+  JWT_REFRESH_SECRET: string;
+
+  @IsString()
+  RESEND_API_KEY: string;
+
+  @IsUrl({ require_tld: false })
+  FRONTEND_URL: string;
+
+  @IsUrl({ require_tld: true })
+  QDRANT_URL: string;
+
+  @IsString()
+  QDRANT_API_KEY: string;
+
+  @IsString()
+  REDIS_HOST: string;
+
+  @IsNumber()
+  REDIS_PORT: number;
+
+  @IsOptional()
+  @IsString()
+  REDIS_PASSWORD?: string;
+
+  @IsOptional()
+  @IsString()
+  LOG_LEVEL?: string;
+
+  @IsOptional()
+  @IsString()
+  SWAGGER_ENABLED?: string;
+
+  @IsOptional()
+  @IsString()
+  HEALTH_CHECK_QDRANT?: string;
+}
+
+export function validate(config: Record<string, unknown>) {
+  const validatedConfig = plainToInstance(EnvironmentVariables, config, {
+    enableImplicitConversion: true,
+  });
+
+  const errors = validateSync(validatedConfig, {
+    skipMissingProperties: false,
+  });
+
+  if (errors.length > 0) {
+    throw new Error(
+      `Environment validation failed:\n${errors.map((e) => Object.values(e.constraints ?? {}).join(', ')).join('\n')}`,
+    );
+  }
+
+  return validatedConfig;
+}
