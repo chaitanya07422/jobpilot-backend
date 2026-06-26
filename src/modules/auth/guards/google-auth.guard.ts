@@ -20,6 +20,10 @@ export class GoogleAuthGuard extends AuthGuard('google') {
     return super.canActivate(context);
   }
 
+  getAuthenticateOptions(): { prompt: string } {
+    return { prompt: 'select_account' };
+  }
+
   handleRequest<TUser>(
     err: Error | null,
     user: TUser,
