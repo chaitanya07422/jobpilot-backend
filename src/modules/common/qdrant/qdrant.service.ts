@@ -14,6 +14,7 @@ export class QdrantService implements OnModuleDestroy {
     this.client = new QdrantClient({
       url,
       apiKey,
+      checkCompatibility: false,
     });
 
     this.logger.log('Qdrant client initialized');

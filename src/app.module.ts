@@ -6,6 +6,7 @@ import { DatabaseModule } from './modules/common/database';
 import { RedisModule } from './modules/common/redis';
 import { QdrantModule } from './modules/common/qdrant';
 import { HealthModule } from './modules/common/health';
+import { AuthModule } from './modules/auth';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { HealthModule } from './modules/common/health';
     RedisModule,
     QdrantModule,
     HealthModule,
+    AuthModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,

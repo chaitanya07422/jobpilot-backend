@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './modules/shared/filters';
 import { LoggingInterceptor } from './modules/shared/interceptors';
@@ -30,6 +31,7 @@ async function bootstrap() {
   // Security
   app.use(helmet());
   app.use(compression());
+  app.use(cookieParser());
   app.enableCors({
     origin: frontendUrl,
     credentials: true,

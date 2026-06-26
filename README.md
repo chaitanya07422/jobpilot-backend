@@ -97,11 +97,31 @@ Push to `main` runs `.github/workflows/deploy.yml`.
 
 ## Local development
 
+MongoDB uses your **server/Atlas database** — only Redis runs locally via Docker (refresh tokens).
+
 ```bash
+docker compose up -d          # Redis on localhost:6379 — or: npm run docker:up
+cp .env.example .env          # set MONGODB_URI to your Atlas/server URI
 npm install
-cp .env.example .env
 npm run start:dev
 ```
+
+Example `.env` for local API against server DB:
+
+```env
+MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/jobpilot
+REDIS_HOST=localhost
+REDIS_PORT=6379
+JWT_ACCESS_SECRET=...
+JWT_REFRESH_SECRET=...
+RESEND_API_KEY=re_...
+FRONTEND_URL=http://localhost:5173
+QDRANT_URL=https://<your-cluster>.cloud.qdrant.io
+QDRANT_API_KEY=...
+HEALTH_CHECK_QDRANT=false
+```
+
+Stop Redis: `docker compose down` (or `npm run docker:down`)
 
 API: `http://localhost:3000/api/v1/health`  
 Swagger: `http://localhost:3000/api/docs`

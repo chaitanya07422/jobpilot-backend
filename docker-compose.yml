@@ -1,0 +1,21 @@
+# Local development — Redis only (MongoDB uses Atlas / server DB)
+# Usage: docker compose up -d
+# Stop:  docker compose down
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: jobpilot-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - jobpilot_redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  jobpilot_redis_data:
