@@ -2,6 +2,8 @@
 
 Technical reference for the auth feature module. Updated per implementation module.
 
+**Learn the concepts:** [AUTH-LEARNING.md](./AUTH-LEARNING.md) — full walkthrough of JWT, OAuth, Redis, frontend session, security, and bugs we fixed.
+
 **Architecture:** modular monolith — one NestJS process, feature code under `src/modules/auth/`.
 
 ---
