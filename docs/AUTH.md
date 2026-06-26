@@ -182,8 +182,29 @@ If Google env vars are missing, `/auth/google` returns `503`.
 
 ---
 
+## Module 5 — Frontend Session Bootstrap (complete)
+
+### Behaviour
+
+- `accessToken` kept in memory only (`session-token.ts`); user/subscription persisted in `localStorage`
+- On app load, `AuthBootstrap` waits for Zustand rehydration, then:
+  1. If in-memory token exists → `GET /me`
+  2. Else if persisted user or refresh cookie → `POST /refresh` then `GET /me`
+  3. On failure → clear local session
+- `apiFetch` attaches Bearer token automatically; on `401` retries once via `POST /refresh` (deduped)
+- Protected routes wait for `authReady` before redirecting
+
+### Frontend files
+
+- `src/lib/session-token.ts` — in-memory access token + session event hooks
+- `src/api/client.ts` — `apiFetch` with 401 refresh retry
+- `src/components/auth/AuthBootstrap.tsx` — app-load session restore
+- `src/store/authStore.ts` — `bootstrap()`, `authReady`
+
+---
+
 ## Upcoming modules
 
 | Module | Adds |
 |--------|------|
-| M5 | Full apiClient (401 refresh retry, AuthBootstrap on app load) |
+| — | Auth complete for v1 |
