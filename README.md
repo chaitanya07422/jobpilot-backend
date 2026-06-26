@@ -2,6 +2,11 @@
 
 NestJS API for JobPilot AI.
 
+**Production API:** `https://jobpilot-api.duckdns.org`  
+**Health check:** `https://jobpilot-api.duckdns.org/api/v1/health`
+
+For Oracle VM deployment and debugging guide, see **[docs/ORACLE-DEPLOYMENT.md](docs/ORACLE-DEPLOYMENT.md)**.
+
 ## Architecture
 
 ```text
