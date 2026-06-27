@@ -36,7 +36,9 @@ export class ResumesController {
   @Get()
   @ApiOperation({ summary: 'List resumes for the current user (max 1)' })
   async list(@CurrentUser() user: UserDocument) {
-    const resumes = await this.resumesService.findAllForUser(user._id.toString());
+    const resumes = await this.resumesService.findAllForUser(
+      user._id.toString(),
+    );
     return successResponse(resumes, 'Resumes fetched');
   }
 

@@ -40,7 +40,9 @@ export class ResumesService {
     this.validateFile(file);
 
     const userId = user._id.toString();
-    const existing = await this.resumeModel.findOne({ userId: user._id }).exec();
+    const existing = await this.resumeModel
+      .findOne({ userId: user._id })
+      .exec();
 
     if (existing) {
       await this.storageService.delete(existing.storagePath);

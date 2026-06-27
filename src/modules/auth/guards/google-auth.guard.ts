@@ -31,9 +31,10 @@ export class GoogleAuthGuard extends AuthGuard('google') {
     context: ExecutionContext,
   ): TUser {
     if (!user) {
-      const res = context
-        .switchToHttp()
-        .getResponse<{ headersSent: boolean; redirect: (url: string) => void }>();
+      const res = context.switchToHttp().getResponse<{
+        headersSent: boolean;
+        redirect: (url: string) => void;
+      }>();
       const frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
       const message = this.getFailureMessage(err, info);
 
