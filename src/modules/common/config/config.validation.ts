@@ -89,6 +89,38 @@ class EnvironmentVariables {
   @IsOptional()
   @IsString()
   HEALTH_CHECK_QDRANT?: string;
+
+  @IsOptional()
+  @IsUrl({ require_tld: false })
+  API_PUBLIC_URL?: string;
+
+  @IsOptional()
+  @IsString()
+  UPLOAD_DIR?: string;
+
+  @IsOptional()
+  @IsString()
+  STORAGE_PROVIDER?: string;
+
+  @IsOptional()
+  @IsString()
+  OCI_REGION?: string;
+
+  @IsOptional()
+  @IsString()
+  OCI_NAMESPACE?: string;
+
+  @IsOptional()
+  @IsString()
+  OCI_BUCKET_NAME?: string;
+
+  @IsOptional()
+  @IsString()
+  OCI_CONFIG_FILE?: string;
+
+  @IsOptional()
+  @IsString()
+  OCI_CONFIG_PROFILE?: string;
 }
 
 export function validate(config: Record<string, unknown>) {
