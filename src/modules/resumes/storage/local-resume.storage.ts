@@ -37,14 +37,14 @@ export class LocalResumeStorage implements ResumeStorageBackend {
     }
   }
 
-  async openReadStream(storagePath: string): Promise<Readable> {
+  openReadStream(storagePath: string): Promise<Readable> {
     const absolutePath = this.resolveAbsolutePath(storagePath);
 
     if (!existsSync(absolutePath)) {
-      throw new Error('Resume file not found');
+      return Promise.reject(new Error('Resume file not found'));
     }
 
-    return createReadStream(absolutePath);
+    return Promise.resolve(createReadStream(absolutePath));
   }
 
   private resolveAbsolutePath(storagePath: string): string {
