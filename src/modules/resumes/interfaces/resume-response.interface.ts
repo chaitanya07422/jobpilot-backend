@@ -1,4 +1,6 @@
 import { ResumeDocument } from '../schemas';
+import { ResumeProfileDocument } from '../schemas/resume-profile.schema';
+import { ResumeProfileResponse } from './resume-profile.interface';
 
 export interface ResumeResponse {
   id: string;
@@ -9,18 +11,49 @@ export interface ResumeResponse {
   uploadDate: string;
   isPrimary: boolean;
   fileSize: string;
+  extractionStatus?: string;
+  extractionError?: string;
+  profile?: ResumeProfileResponse;
 }
 
-export function toResumeResponse(resume: ResumeDocument): ResumeResponse {
+export function toResumeProfileResponse(
+  profile: ResumeProfileDocument,
+): ResumeProfileResponse {
+  return {
+    resumeId: profile.resumeId.toString(),
+    extractionStatus: profile.extractionStatus,
+    extractionError: profile.extractionError,
+    summary: profile.summary,
+    totalYearsExperience: profile.totalYearsExperience,
+    skills: profile.skills ?? [],
+    technologies: profile.technologies ?? [],
+    experience: profile.experience ?? [],
+    education: profile.education ?? [],
+    projects: profile.projects ?? [],
+    certifications: profile.certifications ?? [],
+    languages: profile.languages ?? [],
+    otherSections: profile.otherSections ?? [],
+    profileConfirmedAt: profile.profileConfirmedAt?.toISOString(),
+  };
+}
+
+export function toResumeResponse(
+  resume: ResumeDocument,
+  fileUrl: string,
+  profile?: ResumeProfileDocument | null,
+): ResumeResponse {
   return {
     id: resume._id.toString(),
     name: resume.name,
     fileName: resume.fileName,
-    url: resume.url,
+    url: fileUrl,
     skillsExtracted: resume.skillsExtracted,
     uploadDate: (resume.get('createdAt') as Date).toISOString(),
     isPrimary: resume.isPrimary,
     fileSize: formatFileSize(resume.sizeBytes),
+    extractionStatus: profile?.extractionStatus,
+    extractionError: profile?.extractionError,
+    profile: profile ? toResumeProfileResponse(profile) : undefined,
   };
 }
 

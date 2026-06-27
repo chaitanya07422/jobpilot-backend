@@ -2,22 +2,42 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '../auth/auth.module';
+import { LlmPromptsModule } from '../llm-prompts/llm-prompts.module';
 import { ResumesController } from './resumes.controller';
-import { Resume, ResumeSchema } from './schemas';
+import {
+  Resume,
+  ResumeSchema,
+  ResumeProfile,
+  ResumeProfileSchema,
+} from './schemas';
 import { LocalResumeStorage } from './storage/local-resume.storage';
 import { OciResumeStorage } from './storage/oci-resume.storage';
 import { RESUME_STORAGE_BACKEND } from './storage/resume-storage.backend';
+import {
+  GeminiResumeExtractorService,
+  PdfTextExtractorService,
+  ResumeExtractionService,
+  ResumeTextTrimmerService,
+} from './extraction';
 import { ResumeStorageService, ResumesService } from './services';
 
 @Module({
   imports: [
     AuthModule,
-    MongooseModule.forFeature([{ name: Resume.name, schema: ResumeSchema }]),
+    LlmPromptsModule,
+    MongooseModule.forFeature([
+      { name: Resume.name, schema: ResumeSchema },
+      { name: ResumeProfile.name, schema: ResumeProfileSchema },
+    ]),
   ],
   controllers: [ResumesController],
   providers: [
     ResumesService,
     ResumeStorageService,
+    ResumeExtractionService,
+    PdfTextExtractorService,
+    ResumeTextTrimmerService,
+    GeminiResumeExtractorService,
     LocalResumeStorage,
     OciResumeStorage,
     {

@@ -3,7 +3,9 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
+  Body,
   StreamableFile,
   UploadedFile,
   UseGuards,
@@ -24,6 +26,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import type { UserDocument } from '../auth/schemas';
 import { successResponse } from '../shared/helpers';
 import { MAX_RESUME_SIZE_BYTES } from './constants/resume.constants';
+import { UpdateResumeProfileDto } from './dto/update-resume-profile.dto';
 import { ResumesService } from './services/resumes.service';
 
 @ApiTags('Resumes')
@@ -66,7 +69,40 @@ export class ResumesController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const resume = await this.resumesService.upload(user, file);
-    return successResponse(resume, 'Resume uploaded');
+    return successResponse(resume, 'Resume uploaded and profile extracted');
+  }
+
+  @Get('profile')
+  @ApiOperation({
+    summary: 'Get extracted resume profile for the current user',
+  })
+  async getProfile(@CurrentUser() user: UserDocument) {
+    const profile = await this.resumesService.getProfileForUser(
+      user._id.toString(),
+    );
+    return successResponse(profile, 'Resume profile fetched');
+  }
+
+  @Patch('profile')
+  @ApiOperation({ summary: 'Update extracted resume profile (profile editor)' })
+  async updateProfile(
+    @CurrentUser() user: UserDocument,
+    @Body() dto: UpdateResumeProfileDto,
+  ) {
+    const profile = await this.resumesService.updateProfileForUser(
+      user._id.toString(),
+      dto,
+    );
+    return successResponse(profile, 'Resume profile updated');
+  }
+
+  @Post('profile/confirm')
+  @ApiOperation({ summary: 'Confirm resume profile after review' })
+  async confirmProfile(@CurrentUser() user: UserDocument) {
+    const profile = await this.resumesService.confirmProfileForUser(
+      user._id.toString(),
+    );
+    return successResponse(profile, 'Resume profile confirmed');
   }
 
   @Get(':id/file')

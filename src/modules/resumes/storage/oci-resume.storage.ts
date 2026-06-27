@@ -22,6 +22,20 @@ export class OciResumeStorage implements ResumeStorageBackend, OnModuleInit {
   constructor(private readonly configService: ConfigService) {}
 
   onModuleInit(): void {
+    if (!this.isOciEnabled()) {
+      return;
+    }
+
+    this.initializeClient();
+  }
+
+  private isOciEnabled(): boolean {
+    return (
+      this.configService.get<string>('STORAGE_PROVIDER', 'local') === 'oci'
+    );
+  }
+
+  private initializeClient(): void {
     const region = this.configService.getOrThrow<string>('OCI_REGION');
     this.namespace = this.configService.getOrThrow<string>('OCI_NAMESPACE');
     this.bucketName = this.configService.getOrThrow<string>('OCI_BUCKET_NAME');
@@ -50,10 +64,25 @@ export class OciResumeStorage implements ResumeStorageBackend, OnModuleInit {
     );
   }
 
+  private ensureClient(): void {
+    if (this.client) {
+      return;
+    }
+
+    if (!this.isOciEnabled()) {
+      throw new InternalServerErrorException(
+        'OCI resume storage is not enabled',
+      );
+    }
+
+    this.initializeClient();
+  }
+
   async save(
     userId: string,
     file: Express.Multer.File,
   ): Promise<{ storagePath: string }> {
+    this.ensureClient();
     const storagePath = join('resumes', userId, `${randomUUID()}.pdf`);
 
     await this.client.putObject({
@@ -69,6 +98,7 @@ export class OciResumeStorage implements ResumeStorageBackend, OnModuleInit {
   }
 
   async delete(storagePath: string): Promise<void> {
+    this.ensureClient();
     try {
       await this.client.deleteObject({
         namespaceName: this.namespace,
@@ -81,6 +111,7 @@ export class OciResumeStorage implements ResumeStorageBackend, OnModuleInit {
   }
 
   async openReadStream(storagePath: string): Promise<Readable> {
+    this.ensureClient();
     try {
       const response = await this.client.getObject({
         namespaceName: this.namespace,
