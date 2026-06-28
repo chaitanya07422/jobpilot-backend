@@ -5,6 +5,10 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import {
+  toUserFacingGeminiError,
+  withGeminiRetry,
+} from '../../shared/helpers/gemini-retry.helper';
 import { LlmPromptService } from '../../llm-prompts/services/llm-prompt.service';
 import { RESUME_PROFILE_EXTRACTION_PROMPT_KEY } from '../../llm-prompts/constants/llm-prompt.constants';
 import { ExtractedResumeProfile } from '../interfaces/resume-profile.interface';
@@ -19,6 +23,10 @@ export class GeminiResumeExtractorService {
     private readonly configService: ConfigService,
     private readonly llmPromptService: LlmPromptService,
   ) {}
+
+  private get retryAttempts(): number {
+    return Number(this.configService.get<string>('GEMINI_RETRY_ATTEMPTS') ?? 4);
+  }
 
   async extract(trimmedText: string): Promise<ExtractedResumeProfile> {
     const apiKey = this.configService.get<string>('GEMINI_API_KEY');
@@ -57,13 +65,20 @@ export class GeminiResumeExtractorService {
 
     let raw: string;
     try {
-      const result = await model.generateContent(userMessage);
+      const result = await withGeminiRetry(
+        () => model.generateContent(userMessage),
+        {
+          maxAttempts: this.retryAttempts,
+          logger: this.logger,
+          label: `Gemini extraction (${modelName})`,
+        },
+      );
       raw = result.response.text();
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Gemini request failed';
-      this.logger.error(`Gemini call failed: ${message}`);
-      throw new InternalServerErrorException(message);
+      this.logger.error(`Gemini call failed after retries: ${message}`);
+      throw new InternalServerErrorException(toUserFacingGeminiError(error));
     }
 
     if (!raw) {

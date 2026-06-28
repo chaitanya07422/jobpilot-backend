@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { toUserFacingGeminiError } from '../../shared/helpers/gemini-retry.helper';
 import { ExtractionStatus } from '../enums/extraction-status.enum';
 import { GeminiResumeExtractorService } from './gemini-resume-extractor.service';
 import { PdfTextExtractorService } from './pdf-text-extractor.service';
@@ -47,8 +48,9 @@ export class ResumeExtractionService {
     resumeId: Types.ObjectId;
     userId: Types.ObjectId;
     pdfBuffer: Buffer;
+    profileEditLimit?: number;
   }): Promise<ResumeProfileDocument> {
-    const { resumeId, userId, pdfBuffer } = params;
+    const { resumeId, userId, pdfBuffer, profileEditLimit = 2 } = params;
 
     const profileDoc = await this.resumeProfileModel
       .findOneAndUpdate(
@@ -58,6 +60,13 @@ export class ResumeExtractionService {
             userId,
             extractionStatus: ExtractionStatus.Processing,
             extractionError: undefined,
+            profileEditCount: 0,
+            profileEditLimit,
+            profileConfirmedAt: undefined,
+            qdrantSyncedAt: undefined,
+            qdrantSyncError: undefined,
+            embeddingModel: undefined,
+            embeddingTextHash: undefined,
           },
           $setOnInsert: {
             skills: [],
@@ -105,12 +114,12 @@ export class ResumeExtractionService {
       profileDoc.extractionStatus = ExtractionStatus.ReadyForReview;
       profileDoc.extractionError = undefined;
       profileDoc.profileConfirmedAt = undefined;
+      profileDoc.profileEditCount = 0;
 
       await profileDoc.save();
       return profileDoc;
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Resume extraction failed';
+      const message = toUserFacingGeminiError(error);
 
       profileDoc.extractionStatus = ExtractionStatus.Failed;
       profileDoc.extractionError = message;

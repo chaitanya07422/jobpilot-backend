@@ -33,6 +33,9 @@ export class User {
 
   @Prop({ type: SubscriptionSchema, default: () => ({ active: false }) })
   subscription: Subscription;
+
+  @Prop({ default: 0 })
+  resumeUploadCount: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

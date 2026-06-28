@@ -57,4 +57,15 @@ export interface ResumeProfileResponse {
   languages: string[];
   otherSections: ExtractedOtherSectionEntry[];
   profileConfirmedAt?: string;
+  profileEditCount: number;
+  profileEditLimit: number;
+  editsRemaining: number;
+  canEditProfile: boolean;
+  canSaveProfile: boolean;
+  canConfirmProfile: boolean;
+  isReadOnly: boolean;
+  qdrantSyncedAt?: string;
+  qdrantSyncError?: string;
+  qdrantPointId?: string;
+  embeddingModel?: string;
 }

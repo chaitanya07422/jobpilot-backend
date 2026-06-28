@@ -72,6 +72,13 @@ export class ResumesController {
     return successResponse(resume, 'Resume uploaded and profile extracted');
   }
 
+  @Get('quota')
+  @ApiOperation({ summary: 'Get resume upload quota for the current user' })
+  async getQuota(@CurrentUser() user: UserDocument) {
+    const quota = await this.resumesService.getQuotaForUser(user);
+    return successResponse(quota, 'Resume quota fetched');
+  }
+
   @Get('profile')
   @ApiOperation({
     summary: 'Get extracted resume profile for the current user',
@@ -98,9 +105,13 @@ export class ResumesController {
 
   @Post('profile/confirm')
   @ApiOperation({ summary: 'Confirm resume profile after review' })
-  async confirmProfile(@CurrentUser() user: UserDocument) {
+  async confirmProfile(
+    @CurrentUser() user: UserDocument,
+    @Body() dto: UpdateResumeProfileDto,
+  ) {
     const profile = await this.resumesService.confirmProfileForUser(
       user._id.toString(),
+      dto,
     );
     return successResponse(profile, 'Resume profile confirmed');
   }

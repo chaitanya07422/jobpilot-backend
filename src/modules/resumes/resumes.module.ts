@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { EmbeddingsModule } from '../embeddings';
 import { AuthModule } from '../auth/auth.module';
 import { LlmPromptsModule } from '../llm-prompts/llm-prompts.module';
 import { ResumesController } from './resumes.controller';
@@ -19,11 +20,18 @@ import {
   ResumeExtractionService,
   ResumeTextTrimmerService,
 } from './extraction';
-import { ResumeStorageService, ResumesService } from './services';
+import { ProfileEmbeddingStep, ResumePipelineService } from './pipeline';
+import {
+  ResumeLimitService,
+  ResumeStorageService,
+  ResumeVectorService,
+  ResumesService,
+} from './services';
 
 @Module({
   imports: [
     AuthModule,
+    EmbeddingsModule,
     LlmPromptsModule,
     MongooseModule.forFeature([
       { name: Resume.name, schema: ResumeSchema },
@@ -34,6 +42,10 @@ import { ResumeStorageService, ResumesService } from './services';
   providers: [
     ResumesService,
     ResumeStorageService,
+    ResumeLimitService,
+    ResumeVectorService,
+    ResumePipelineService,
+    ProfileEmbeddingStep,
     ResumeExtractionService,
     PdfTextExtractorService,
     ResumeTextTrimmerService,

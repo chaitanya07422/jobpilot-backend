@@ -97,31 +97,36 @@ Push to `main` runs `.github/workflows/deploy.yml`.
 
 ## Local development
 
-MongoDB uses your **server/Atlas database** — only Redis runs locally via Docker (refresh tokens).
+All local infra runs in Docker — MongoDB, Redis, and Qdrant.
 
 ```bash
-docker compose up -d          # Redis on localhost:6379 — or: npm run docker:up
-cp .env.example .env          # set MONGODB_URI to your Atlas/server URI
+docker compose up -d          # MongoDB + Redis + Qdrant — or: npm run docker:up
+cp .env.example .env          # defaults work with Docker services above
 npm install
 npm run start:dev
 ```
 
-Example `.env` for local API against server DB:
+| Service | URL |
+| ------- | --- |
+| MongoDB | `mongodb://localhost:27017/jobpilot` |
+| Redis | `localhost:6379` |
+| Qdrant REST | http://localhost:6333 |
+| Qdrant dashboard | http://localhost:6333/dashboard |
+
+Example `.env` for fully local stack:
 
 ```env
-MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/jobpilot
+MONGODB_URI=mongodb://localhost:27017/jobpilot
 REDIS_HOST=localhost
 REDIS_PORT=6379
-JWT_ACCESS_SECRET=...
-JWT_REFRESH_SECRET=...
-RESEND_API_KEY=re_...
-FRONTEND_URL=http://localhost:5173
-QDRANT_URL=https://<your-cluster>.cloud.qdrant.io
-QDRANT_API_KEY=...
+QDRANT_URL=http://localhost:6333
+QDRANT_ENABLED=true
 HEALTH_CHECK_QDRANT=false
 ```
 
-Stop Redis: `docker compose down` (or `npm run docker:down`)
+To use **MongoDB Atlas** instead, set `MONGODB_URI` to your Atlas connection string in `.env`.
+
+Stop Docker services: `docker compose down` (or `npm run docker:down`)
 
 API: `http://localhost:3000/api/v1/health`  
 Swagger: `http://localhost:3000/api/docs`

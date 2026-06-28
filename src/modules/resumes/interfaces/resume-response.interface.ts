@@ -1,6 +1,8 @@
 import { ResumeDocument } from '../schemas';
 import { ResumeProfileDocument } from '../schemas/resume-profile.schema';
+import { toQdrantPointId } from '../../embeddings/utils/qdrant-point-id.util';
 import { ResumeProfileResponse } from './resume-profile.interface';
+import { buildProfilePermissions } from './resume-quota.interface';
 
 export interface ResumeResponse {
   id: string;
@@ -19,6 +21,8 @@ export interface ResumeResponse {
 export function toResumeProfileResponse(
   profile: ResumeProfileDocument,
 ): ResumeProfileResponse {
+  const permissions = buildProfilePermissions(profile);
+
   return {
     resumeId: profile.resumeId.toString(),
     extractionStatus: profile.extractionStatus,
@@ -34,6 +38,12 @@ export function toResumeProfileResponse(
     languages: profile.languages ?? [],
     otherSections: profile.otherSections ?? [],
     profileConfirmedAt: profile.profileConfirmedAt?.toISOString(),
+    ...permissions,
+    qdrantSyncedAt: profile.qdrantSyncedAt?.toISOString(),
+    qdrantSyncError: profile.qdrantSyncError,
+    qdrantPointId:
+      profile.qdrantPointId ?? toQdrantPointId(profile.userId.toString()),
+    embeddingModel: profile.embeddingModel,
   };
 }
 

@@ -681,7 +681,7 @@ One call per upload. Re-upload only triggers again.
 GEMINI_API_KEY=your-key
 RESUME_EXTRACTION_ENABLED=true
 
-docker compose up -d   # Redis
+docker compose up -d   # MongoDB + Redis + Qdrant
 npm run seed:llm-prompts   # insert prompt into MongoDB
 npm run start:dev
 ```

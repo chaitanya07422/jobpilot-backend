@@ -62,11 +62,12 @@ class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   FRONTEND_URL: string;
 
-  @IsUrl({ require_tld: true })
+  @IsUrl({ require_tld: false })
   QDRANT_URL: string;
 
+  @IsOptional()
   @IsString()
-  QDRANT_API_KEY: string;
+  QDRANT_API_KEY?: string;
 
   @IsString()
   REDIS_HOST: string;
@@ -129,6 +130,34 @@ class EnvironmentVariables {
   @IsOptional()
   @IsString()
   GEMINI_MODEL?: string;
+
+  @IsOptional()
+  @IsString()
+  QDRANT_ENABLED?: string;
+
+  @IsOptional()
+  @IsString()
+  QDRANT_COLLECTION_RESUMES?: string;
+
+  @IsOptional()
+  @IsString()
+  GEMINI_EMBEDDING_MODEL?: string;
+
+  @IsOptional()
+  @IsNumber()
+  EMBEDDING_VECTOR_SIZE?: number;
+
+  @IsOptional()
+  @IsNumber()
+  PROFILE_EDIT_LIMIT?: number;
+
+  @IsOptional()
+  @IsNumber()
+  DEFAULT_RESUME_UPLOAD_LIMIT?: number;
+
+  @IsOptional()
+  @IsNumber()
+  RESUME_UPLOAD_LIMIT_PRO?: number;
 }
 
 export function validate(config: Record<string, unknown>) {

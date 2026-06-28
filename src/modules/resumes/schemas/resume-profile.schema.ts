@@ -93,6 +93,27 @@ export class ResumeProfile {
 
   @Prop()
   profileConfirmedAt?: Date;
+
+  @Prop({ default: 0 })
+  profileEditCount: number;
+
+  @Prop({ default: 2 })
+  profileEditLimit: number;
+
+  @Prop()
+  qdrantSyncedAt?: Date;
+
+  @Prop()
+  qdrantSyncError?: string;
+
+  @Prop()
+  embeddingModel?: string;
+
+  @Prop()
+  embeddingTextHash?: string;
+
+  @Prop()
+  qdrantPointId?: string;
 }
 
 export const ResumeProfileSchema = SchemaFactory.createForClass(ResumeProfile);
