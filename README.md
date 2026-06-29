@@ -16,13 +16,22 @@ Cloudflare Pages (React)
          ▼
   Oracle VM (chaitu-server)
   ├── infra/nginx-proxy-manager  →  api.yourdomain.com
-  └── apps/jobpilot-backend      →  NestJS :3000 (PM2)
+  └── apps/jobpilot-backend      →  NestJS :3001 (PM2)
          │
     ┌────┴────┬────────────┐
     ▼         ▼            ▼
 MongoDB    Qdrant      Redis
-Atlas      Cloud       (cloud or infra/docker)
+Atlas      Cloud       (Docker on VM)
+
+Cloudflare Pages — jobpilot-ai (user app)
+Cloudflare Pages — jobpilot-admin (job catalog admin)
 ```
+
+## Jobs admin module
+
+- MongoDB collection: `jobs`
+- Admin API: `/api/v1/admin/jobs` (header `X-Admin-Key`)
+- Seed data: `scripts/data/seed-jobs.json` (use admin UI **Seed sample jobs** on server)
 
 ## VM layout (`chaitu-server`)
 

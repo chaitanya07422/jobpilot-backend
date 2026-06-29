@@ -517,11 +517,24 @@ pm2 reload jobpilot-api --update-env
 ## 7. Frontend integration
 
 ```env
-# jobpilot-ai
+# jobpilot-ai (Cloudflare Pages)
 VITE_API_URL=https://jobpilot-api.duckdns.org
 
-# backend .env
+# jobpilot-admin (Cloudflare Pages — separate project)
+VITE_API_URL=https://jobpilot-api.duckdns.org
+# Do not set VITE_ADMIN_API_KEY in production builds
+
+# backend .env on VM
 FRONTEND_URL=https://your-app.pages.dev
+ADMIN_FRONTEND_URL=https://admin.your-app.pages.dev
+ADMIN_API_KEY=<strong-random-secret>
+```
+
+After deploy, seed jobs once via admin UI (**Seed sample jobs**) or:
+
+```bash
+curl -X POST https://jobpilot-api.duckdns.org/api/v1/admin/jobs/seed \
+  -H "X-Admin-Key: YOUR_ADMIN_KEY"
 ```
 
 ---

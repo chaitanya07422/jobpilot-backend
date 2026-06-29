@@ -20,6 +20,10 @@ async function bootstrap() {
     'FRONTEND_URL',
     'http://localhost:5173',
   );
+  const adminFrontendUrl = configService.get<string>('ADMIN_FRONTEND_URL');
+  const corsOrigins = [frontendUrl, adminFrontendUrl].filter(
+    (origin): origin is string => Boolean(origin?.trim()),
+  );
 
   // API versioning
   app.setGlobalPrefix('api');
@@ -33,10 +37,10 @@ async function bootstrap() {
   app.use(compression());
   app.use(cookieParser());
   app.enableCors({
-    origin: frontendUrl,
+    origin: corsOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Key'],
   });
 
   // Global pipes

@@ -1,0 +1,68 @@
+[
+  {
+    "company": "Razorpay",
+    "role": "Senior Backend Engineer",
+    "location": "Bangalore, India",
+    "description": "Build and scale payment infrastructure handling millions of transactions daily. Work with distributed systems, microservices, and high-throughput APIs. Lead backend architecture decisions for core payment flows.",
+    "applyUrl": "https://razorpay.com/careers/senior-backend-engineer",
+    "requiredSkills": ["Go", "PostgreSQL", "Redis", "Kafka", "Microservices"],
+    "salary": "₹35-50 LPA",
+    "source": "greenhouse",
+    "externalId": "seed-razorpay-senior-backend-engineer"
+  },
+  {
+    "company": "Sarvam AI",
+    "role": "Backend Engineer - ML Platform",
+    "location": "Bangalore, India",
+    "description": "Develop ML infrastructure and API services for Indic language models. Build scalable inference pipelines and model serving systems using Python and cloud-native technologies.",
+    "applyUrl": "https://sarvam.ai/careers/backend-engineer",
+    "requiredSkills": ["Python", "FastAPI", "Kubernetes", "PyTorch", "gRPC"],
+    "salary": "₹30-45 LPA",
+    "source": "ashby",
+    "externalId": "seed-sarvam-backend-ml-platform"
+  },
+  {
+    "company": "PhonePe",
+    "role": "Staff Backend Engineer",
+    "location": "Bangalore, India",
+    "description": "Architect and build core transaction processing systems for India's largest digital payments platform. Drive technical excellence in distributed systems and database optimization.",
+    "applyUrl": "https://phonepe.com/careers/staff-backend",
+    "requiredSkills": ["Java", "Spring Boot", "Cassandra", "Kafka", "AWS"],
+    "salary": "₹45-65 LPA",
+    "source": "lever",
+    "externalId": "seed-phonepe-staff-backend-engineer"
+  },
+  {
+    "company": "Zerodha",
+    "role": "Backend Developer",
+    "location": "Bangalore, India",
+    "description": "Build low-latency trading systems and market data pipelines. Work on order management, risk systems, and real-time data processing for millions of traders.",
+    "applyUrl": "https://zerodha.com/careers/backend-developer",
+    "requiredSkills": ["Go", "PostgreSQL", "Redis", "WebSockets", "Linux"],
+    "salary": "₹28-40 LPA",
+    "source": "greenhouse",
+    "externalId": "seed-zerodha-backend-developer"
+  },
+  {
+    "company": "Swiggy",
+    "role": "Backend Engineer II",
+    "location": "Bangalore, India",
+    "description": "Develop logistics and delivery optimization systems. Build real-time tracking, routing algorithms, and partner integration APIs for food delivery platform.",
+    "applyUrl": "https://swiggy.com/careers/backend-engineer-ii",
+    "requiredSkills": ["Python", "Django", "PostgreSQL", "Redis", "GCP"],
+    "salary": "₹22-35 LPA",
+    "source": "greenhouse",
+    "externalId": "seed-swiggy-backend-engineer-ii"
+  },
+  {
+    "company": "Groww",
+    "role": "Backend Engineer - Platform",
+    "location": "Bangalore, India",
+    "description": "Build investing platform services for millions of users. Work on order management, portfolio systems, and integrations with exchanges and payment gateways.",
+    "applyUrl": "https://groww.in/careers/backend-platform",
+    "requiredSkills": ["Java", "Spring", "PostgreSQL", "Kafka", "AWS"],
+    "salary": "₹24-38 LPA",
+    "source": "lever",
+    "externalId": "seed-groww-backend-platform"
+  }
+]

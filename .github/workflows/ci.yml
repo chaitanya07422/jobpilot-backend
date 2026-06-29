@@ -61,6 +61,7 @@ jobs:
           JWT_REFRESH_SECRET: test-refresh-secret
           RESEND_API_KEY: re_test_key
           FRONTEND_URL: http://localhost:5173
+          ADMIN_API_KEY: test-admin-key
           HEALTH_CHECK_QDRANT: 'false'
 
       - name: Build

@@ -158,6 +158,14 @@ class EnvironmentVariables {
   @IsOptional()
   @IsNumber()
   RESUME_UPLOAD_LIMIT_PRO?: number;
+
+  @IsOptional()
+  @IsString()
+  ADMIN_API_KEY?: string;
+
+  @IsOptional()
+  @IsUrl({ require_tld: false })
+  ADMIN_FRONTEND_URL?: string;
 }
 
 export function validate(config: Record<string, unknown>) {

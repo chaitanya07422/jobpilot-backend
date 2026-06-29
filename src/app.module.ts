@@ -8,6 +8,7 @@ import { QdrantModule } from './modules/common/qdrant';
 import { HealthModule } from './modules/common/health';
 import { AuthModule } from './modules/auth';
 import { ResumesModule } from './modules/resumes';
+import { JobsModule } from './modules/jobs';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ResumesModule } from './modules/resumes';
     HealthModule,
     AuthModule,
     ResumesModule,
+    JobsModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
