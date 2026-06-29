@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { QdrantClient } from '@qdrant/js-client-rest';
-import { ResumeVectorPayload, RESUME_PAYLOAD_INDEXES } from './qdrant.types';
+import { ResumeVectorPayload, RESUME_PAYLOAD_INDEXES, JOB_PAYLOAD_INDEXES, JobVectorPayload } from './qdrant.types';
 
 @Injectable()
 export class QdrantService implements OnModuleDestroy {
@@ -37,6 +37,13 @@ export class QdrantService implements OnModuleDestroy {
     );
   }
 
+  getJobCollectionName(): string {
+    return (
+      this.configService.get<string>('QDRANT_COLLECTION_JOBS') ||
+      'jobpilot_jobs'
+    );
+  }
+
   async ping(): Promise<void> {
     await this.client.getCollections();
   }
@@ -57,15 +64,22 @@ export class QdrantService implements OnModuleDestroy {
     });
 
     this.logger.log(`Created Qdrant collection "${name}" (${vectorSize}-dim)`);
-    await this.ensureResumePayloadIndexes(name);
   }
 
-  async ensureResumePayloadIndexes(collection: string): Promise<void> {
-    if (this.payloadIndexesEnsured.has(collection)) {
+  private async ensurePayloadIndexes(
+    collection: string,
+    indexes: ReadonlyArray<{
+      field_name: string;
+      field_schema: 'keyword' | 'float' | 'bool' | 'datetime';
+    }>,
+    label: string,
+  ): Promise<void> {
+    const cacheKey = `${collection}:${label}`;
+    if (this.payloadIndexesEnsured.has(cacheKey)) {
       return;
     }
 
-    for (const index of RESUME_PAYLOAD_INDEXES) {
+    for (const index of indexes) {
       try {
         await this.client.createPayloadIndex(collection, {
           field_name: index.field_name,
@@ -82,8 +96,16 @@ export class QdrantService implements OnModuleDestroy {
       }
     }
 
-    this.payloadIndexesEnsured.add(collection);
-    this.logger.log(`Resume payload indexes ensured on "${collection}"`);
+    this.payloadIndexesEnsured.add(cacheKey);
+    this.logger.log(`${label} payload indexes ensured on "${collection}"`);
+  }
+
+  async ensureResumePayloadIndexes(collection: string): Promise<void> {
+    await this.ensurePayloadIndexes(collection, RESUME_PAYLOAD_INDEXES, 'Resume');
+  }
+
+  async ensureJobPayloadIndexes(collection: string): Promise<void> {
+    await this.ensurePayloadIndexes(collection, JOB_PAYLOAD_INDEXES, 'Job');
   }
 
   async upsertResumePoint(params: {
@@ -108,7 +130,35 @@ export class QdrantService implements OnModuleDestroy {
   }
 
   async deleteResumePoint(pointId: string): Promise<void> {
-    const collection = this.getResumeCollectionName();
+    await this.deletePoint(this.getResumeCollectionName(), pointId);
+  }
+
+  async upsertJobPoint(params: {
+    pointId: string;
+    vector: number[];
+    payload: JobVectorPayload;
+  }): Promise<void> {
+    const collection = this.getJobCollectionName();
+    await this.ensureCollection(collection, params.vector.length);
+    await this.ensureJobPayloadIndexes(collection);
+
+    await this.client.upsert(collection, {
+      wait: true,
+      points: [
+        {
+          id: params.pointId,
+          vector: params.vector,
+          payload: params.payload as unknown as Record<string, unknown>,
+        },
+      ],
+    });
+  }
+
+  async deleteJobPoint(pointId: string): Promise<void> {
+    await this.deletePoint(this.getJobCollectionName(), pointId);
+  }
+
+  private async deletePoint(collection: string, pointId: string): Promise<void> {
     const { collections } = await this.client.getCollections();
     const exists = collections.some((c) => c.name === collection);
 

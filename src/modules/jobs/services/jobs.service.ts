@@ -17,12 +17,14 @@ import {
   toAdminJobResponse,
 } from '../interfaces/job-response.interface';
 import { Job, JobDocument } from '../schemas/job.schema';
+import { JobVectorService } from './job-vector.service';
 
 @Injectable()
 export class JobsService {
   constructor(
     @InjectModel(Job.name)
     private readonly jobModel: Model<JobDocument>,
+    private readonly jobVectorService: JobVectorService,
   ) {}
 
   async create(dto: CreateJobDto): Promise<AdminJobResponse> {
@@ -63,6 +65,8 @@ export class JobsService {
         { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
       )
       .exec();
+
+    await this.jobVectorService.syncActiveJob(job);
 
     return toAdminJobResponse(job);
   }
@@ -138,6 +142,12 @@ export class JobsService {
     job.lastSeenAt = new Date();
     await job.save();
 
+    if (job.status === JobCatalogStatus.Active) {
+      await this.jobVectorService.syncActiveJob(job);
+    } else {
+      await this.jobVectorService.removeJob(job);
+    }
+
     return toAdminJobResponse(job);
   }
 
@@ -146,11 +156,14 @@ export class JobsService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.jobModel.deleteOne({ _id: id }).exec();
+    const job = await this.jobModel.findById(id).exec();
 
-    if (result.deletedCount === 0) {
+    if (!job) {
       throw new NotFoundException('Job not found');
     }
+
+    await this.jobVectorService.removeJob(job);
+    await this.jobModel.deleteOne({ _id: id }).exec();
   }
 
   private buildManualExternalId(company: string, role: string): string {

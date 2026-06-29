@@ -16,6 +16,7 @@ import { ListJobsQueryDto } from '../dto/list-jobs-query.dto';
 import { UpdateJobDto } from '../dto/update-job.dto';
 import { AdminApiKeyGuard } from '../guards/admin-api-key.guard';
 import { JobSeedService } from '../services/job-seed.service';
+import { JobVectorService } from '../services/job-vector.service';
 import { JobsService } from '../services/jobs.service';
 
 @ApiTags('Admin Jobs')
@@ -30,6 +31,7 @@ export class AdminJobsController {
   constructor(
     private readonly jobsService: JobsService,
     private readonly jobSeedService: JobSeedService,
+    private readonly jobVectorService: JobVectorService,
   ) {}
 
   @Get()
@@ -44,6 +46,13 @@ export class AdminJobsController {
   async seed() {
     const result = await this.jobSeedService.seedFromFile();
     return successResponse(result, 'Seed completed');
+  }
+
+  @Post('embed')
+  @ApiOperation({ summary: 'Embed all active jobs into Qdrant (admin)' })
+  async embed() {
+    const result = await this.jobVectorService.embedAllActive();
+    return successResponse(result, 'Job embedding completed');
   }
 
   @Post()

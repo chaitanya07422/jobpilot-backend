@@ -141,6 +141,10 @@ class EnvironmentVariables {
 
   @IsOptional()
   @IsString()
+  QDRANT_COLLECTION_JOBS?: string;
+
+  @IsOptional()
+  @IsString()
   GEMINI_EMBEDDING_MODEL?: string;
 
   @IsOptional()

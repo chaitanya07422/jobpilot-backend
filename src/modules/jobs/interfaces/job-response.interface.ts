@@ -40,6 +40,12 @@ export interface JobSeedResult {
   skipped: number;
 }
 
+export interface JobEmbedResult {
+  synced: number;
+  skipped: number;
+  failed: number;
+}
+
 export function toAdminJobResponse(job: JobDocument): AdminJobResponse {
   return {
     id: job._id.toString(),
