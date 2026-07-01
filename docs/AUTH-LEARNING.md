@@ -1,5 +1,4 @@
 # JobPilot Authentication — Learning Guide
-
 A concept-by-concept walkthrough of everything we built for auth in **jobpilot-backend** and **jobpilot-ai**.
 
 For API endpoints and env vars, see [AUTH.md](./AUTH.md).  
